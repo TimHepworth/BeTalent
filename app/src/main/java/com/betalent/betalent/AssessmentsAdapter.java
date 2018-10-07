@@ -40,7 +40,7 @@ class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AssessmentsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AssessmentsAdapter.ViewHolder holder, final int position) {
         Resources res = holder.itemView.getContext().getResources();
 
         //
@@ -81,7 +81,7 @@ class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHol
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(mContext, "Clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, assessments.get(position).getCampaignName() + " Clicked", Toast.LENGTH_SHORT).show();
             }
         });
     }
