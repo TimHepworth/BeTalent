@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">BeTalent</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">BeTalent</string>
+    <string name="nav_header_subtitle">Version 1.0.11a</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_assessments">Assessments</string>
+    <string name="menu_settings">Settings</string>
+    <string name="txt_assessments">Assessments</string>
+    <string name="txt_settings">Settings</string>
+    <string name="txt_login">Login</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_email">Email Address</string>
+    <string name="err_field_required">This field is required</string>
+    <string name="err_invalid_login">Invalid login details</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="err_json_parse">Error parsing JSON</string>
+    <string name="err_unexpected">An unexpected error has occurred</string>
+    <string name="err_login_details">Please re-enter your login credentials. If you have forgotten your password - use the link provided</string>
+    <string name="complete_by">Complete by: {0}</string>
+</resources>
