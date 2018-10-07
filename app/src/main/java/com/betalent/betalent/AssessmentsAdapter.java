@@ -1,5 +1,6 @@
 package com.betalent.betalent;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.betalent.betalent.Model.Campaign;
 
@@ -22,6 +25,7 @@ import java.util.List;
 class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHolder> {
 
     List<Campaign> assessments;
+    Context mContext;
 
     public AssessmentsAdapter(List<Campaign> assessments) {
         this.assessments = assessments;
@@ -31,6 +35,7 @@ class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHol
     @Override
     public AssessmentsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.assessment_row, parent, false);
+
         return new ViewHolder(view);
     }
 
@@ -71,6 +76,14 @@ class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHol
         }
 
 
+        holder.parentLayout.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Toast.makeText(mContext, "Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -83,12 +96,15 @@ class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHol
         public TextView endDate;
         public ImageView productLogo;
         public TextView assessee;
+        public RelativeLayout parentLayout;
         public ViewHolder(View itemView) {
             super(itemView);
+            mContext = itemView.getContext();
             campaignName = itemView.findViewById(R.id.campaignName);
             endDate = itemView.findViewById(R.id.campaignEndDate);
             productLogo = itemView.findViewById(R.id.productLogo);
             assessee = itemView.findViewById(R.id.assessee);
+            parentLayout = itemView.findViewById(R.id.assessmentHolder);
         }
     }
 }
