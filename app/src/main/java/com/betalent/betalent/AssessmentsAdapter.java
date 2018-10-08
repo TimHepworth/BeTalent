@@ -74,8 +74,7 @@ class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHol
                     assessments.get(position).getAssesseeSurname());
 
         }
-
-
+        
         holder.parentLayout.setOnClickListener(new View.OnClickListener()
         {
             @Override
