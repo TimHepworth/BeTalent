@@ -84,8 +84,9 @@ class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHol
             public void onClick(View v)
             {
                 int campaignId = assessments.get(position).getCampaignId();
+                String campaignName = assessments.get(position).getCampaignName();
 
-                Fragment fragment = QuestionFragment.newInstance(campaignId);
+                Fragment fragment = QuestionFragment.newInstance(campaignId, campaignName);
                 FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
 
                 fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("").commit();

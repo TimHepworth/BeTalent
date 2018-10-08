@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.betalent.betalent.Model.User;
 public class QuestionFragment extends Fragment {
 
     private int mCampaignId;
+    private String mCampaignName;
 
     TextView txtQuestion;
     private BeTalentDB betalentDb;
@@ -36,11 +38,12 @@ public class QuestionFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static QuestionFragment newInstance(int campaignId) {
+    public static QuestionFragment newInstance(int campaignId, String campaignName) {
         QuestionFragment fragment = new QuestionFragment();
 
         Bundle args = new Bundle();
         args.putInt("CAMPAIGN_ID", campaignId);
+        args.putString("CAMPAIGN_NAME", campaignName);
         fragment.setArguments(args);
 
         return fragment;
@@ -51,7 +54,8 @@ public class QuestionFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mCampaignId = getArguments().getInt("CAMPAIGN_ID");
-                Toast.makeText(this.getContext(), "Campaign Id: " + mCampaignId, Toast.LENGTH_SHORT).show();
+            mCampaignName = getArguments().getString("CAMPAIGN_NAME");
+//            Toast.makeText(this.getContext(), "Campaign Id: " + mCampaignId, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -62,7 +66,16 @@ public class QuestionFragment extends Fragment {
         betalentDb = BeTalentDB.getInstance(this.getContext());
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_question, container, false);
+        View view = inflater.inflate(R.layout.fragment_question, container, false);
+
+        ((MainActivity) getActivity())
+                .setActionBarTitle(mCampaignName);
+
+        txtQuestion = view.findViewById(R.id.txtQuestion);
+
+        getQuestion();
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -104,40 +117,13 @@ public class QuestionFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-//    private void GetQuestion() {
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                System.out.println("Running Runnable ...");
-//                Question question = betalentDb.getQuestionDao().getNextQuestion()
-//
-//                if (user == null) {
-//                    System.out.println("No user found");
-//
-//                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-//                    intent.putExtra("DataAvailable", false);
-//                    startActivity(intent);
-//
-//                } else {
-//                    System.out.println(user.toString());
-//
-//                    Intent intent;
-//
-//                    if (user.getLoggedIn()) {
-//                        intent = new Intent(getApplicationContext(), MainActivity.class);
-//                    } else {
-//                        intent = new Intent(getApplicationContext(), LoginActivity.class);
-//                        intent.putExtra("DataAvailable", true);
-//                        intent.putExtra("EmailAddress", user.getEmailAddress());
-//                        intent.putExtra("Password", user.getPassword());
-//                    }
-//
-//                    startActivity(intent);
-//                }
-//
-//            }
-//        }) .start();
-//    }
+    private void getQuestion() {
+
+        Question question = betalentDb.getQuestionDao().getNextQuestion(mCampaignId);
+
+        if (question != null) {
+            txtQuestion.setText(Html.fromHtml(question.getQuestionTextSelf()).toString());
+        }
+
+    }
 }

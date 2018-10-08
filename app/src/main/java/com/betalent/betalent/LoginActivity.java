@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     private BeTalentDB betalentDb;
     private String password;
     private String emailAddress;
-    private  ProgressBar pBar;
+    private ProgressBar pBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
