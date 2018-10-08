@@ -5,6 +5,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,7 +83,13 @@ class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHol
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(mContext, assessments.get(position).getCampaignName() + " Clicked", Toast.LENGTH_SHORT).show();
+                int campaignId = assessments.get(position).getCampaignId();
+
+                Fragment fragment = QuestionFragment.newInstance(campaignId);
+                FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("").commit();
+
             }
         });
     }

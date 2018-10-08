@@ -12,6 +12,7 @@ public class Campaign {
     private int campaignUserId;
     private int campaignId;
     private int companyId;
+    private int currentQuestionNo;
     private String campaignName;
     private Long endDate;
     private String assesseeForename;
@@ -25,6 +26,7 @@ public class Campaign {
     public Campaign(int campaignUserId,
                     int campaignId,
                     int companyId,
+                    int currentQuestionNo,
                     String campaignName,
                     Long endDate,
                     String assesseeForename,
@@ -34,6 +36,7 @@ public class Campaign {
         this.campaignUserId = campaignUserId;
         this.campaignId = campaignId;
         this.companyId = companyId;
+        this.currentQuestionNo = currentQuestionNo;
         this.campaignName = campaignName;
         this.endDate = endDate;
         this.assesseeForename = assesseeForename;
@@ -112,5 +115,13 @@ public class Campaign {
 
     public void setProductIcon(String productIcon) {
         this.productIcon = productIcon;
+    }
+
+    public int getCurrentQuestionNo() {
+        return currentQuestionNo;
+    }
+
+    public void setCurrentQuestionNo(int currentQuestionNo) {
+        this.currentQuestionNo = currentQuestionNo;
     }
 }

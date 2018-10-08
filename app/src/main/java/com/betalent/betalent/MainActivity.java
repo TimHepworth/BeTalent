@@ -31,7 +31,8 @@ import junit.framework.Test;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AssessmentsFragment.OnFragmentInteractionListener,
-        SettingsFragment.OnFragmentInteractionListener {
+        SettingsFragment.OnFragmentInteractionListener,
+        QuestionFragment.OnFragmentInteractionListener {
 
 //    public BeTalentDB betalentDb;
 
@@ -83,7 +84,15 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            int count = getFragmentManager().getBackStackEntryCount();
+
+            if (count == 0) {
+                super.onBackPressed();
+                //additional code
+            } else {
+                getFragmentManager().popBackStack();
+            }
+//            super.onBackPressed();
         }
     }
 
@@ -129,10 +138,6 @@ public class MainActivity extends AppCompatActivity
             fragmentClass = AssessmentsFragment.class;
         } else if (id == R.id.nav_settings) {
             fragmentClass = SettingsFragment.class;
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
         }
 
         try {
@@ -143,7 +148,7 @@ public class MainActivity extends AppCompatActivity
 
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("").commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

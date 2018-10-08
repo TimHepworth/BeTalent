@@ -21,4 +21,7 @@
     <string name="err_unexpected">An unexpected error has occurred</string>
     <string name="err_login_details">Please re-enter your login credentials. If you have forgotten your password - use the link provided</string>
     <string name="complete_by">Complete by: {0}</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

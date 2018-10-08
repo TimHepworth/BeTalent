@@ -284,6 +284,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Campaign campaign = new Campaign(jsonObj.getInt("CampaignUserId"),
                                         jsonObj.getInt("CampaignId"),
                                         jsonObj.getInt("CompanyId"),
+                                        jsonObj.getInt("CurrentQuestionNo"),
                                         jsonObj.getString("CampaignName"),
                                         jsonObj.getLong("EndDate"),
                                         jsonObj.getString("AssesseeForename"),
@@ -302,10 +303,12 @@ public class LoginActivity extends AppCompatActivity {
                                     JSONObject jsonQuestion = jsonQuestions.getJSONObject(j);
 
                                     Question question = new Question(jsonQuestion.getInt("QuestionId"),
+                                            campaign.getCampaignId(),
                                             jsonQuestion.getString("SectionName"),
                                             jsonQuestion.getInt("PageNumber"),
                                             jsonQuestion.getInt("DisplayOrder"),
                                             jsonQuestion.getInt("NumScaleChoices"),
+                                            j + 1,
                                             jsonQuestion.getString("QuestionType"),
                                             jsonQuestion.getString("QuestionTextSelf"),
                                             jsonQuestion.getString("QuestionTextOthers"));

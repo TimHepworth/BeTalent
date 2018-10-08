@@ -21,4 +21,7 @@ public interface CampaignDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long insertCampaign(Campaign campaign);
 
+    @Query("UPDATE campaigns SET currentQuestionNo = currentQuestionNo + :questionDelta WHERE campaignId = :campaignId")
+    public long setNextQuestion(int campaignId, int questionDelta);
+
 }
