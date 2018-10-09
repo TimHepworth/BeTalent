@@ -14,7 +14,8 @@
         <TextView
             android:id="@+id/txtQuestion"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="20"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold"/>
@@ -22,7 +23,8 @@
         <LinearLayout
             android:id="@+id/buttonContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="80"
             android:orientation="vertical">
         </LinearLayout>
 
