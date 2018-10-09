@@ -6,15 +6,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.betalent.betalent.Model.BeTalentDB;
 import com.betalent.betalent.Model.Question;
+import com.betalent.betalent.Model.QuestionChoice;
 import com.betalent.betalent.Model.User;
+
+import java.util.List;
+
+import static android.support.constraint.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,8 +36,11 @@ public class QuestionFragment extends Fragment {
 
     private int mCampaignId;
     private String mCampaignName;
+    private int mQuestionNo;
 
     TextView txtQuestion;
+    LinearLayout buttonContainer;
+
     private BeTalentDB betalentDb;
 
     private OnFragmentInteractionListener mListener;
@@ -55,7 +66,6 @@ public class QuestionFragment extends Fragment {
         if (getArguments() != null) {
             mCampaignId = getArguments().getInt("CAMPAIGN_ID");
             mCampaignName = getArguments().getString("CAMPAIGN_NAME");
-//            Toast.makeText(this.getContext(), "Campaign Id: " + mCampaignId, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -72,10 +82,73 @@ public class QuestionFragment extends Fragment {
                 .setActionBarTitle(mCampaignName);
 
         txtQuestion = view.findViewById(R.id.txtQuestion);
+        buttonContainer = view.findViewById(R.id.buttonContainer);
 
         getQuestion();
 
         return view;
+    }
+
+    private void getQuestion() {
+
+        Question question = betalentDb.getQuestionDao().getNextQuestion(mCampaignId);
+
+        if (question != null) {
+
+            mQuestionNo = question.getQuestionNo();
+
+            //
+            //  Show the question text
+            //
+
+            txtQuestion.setText(Html.fromHtml(question.getQuestionTextSelf()).toString());
+
+            //
+            //  Depending on the question type show the answer buttons
+            //
+
+            buttonContainer.removeAllViews();
+
+            switch(question.getQuestionType()) {
+
+                case "SCALE":
+                    List<QuestionChoice> choices = betalentDb.getQuestionChoiceDao().getQuestionChoices(question.getQuestionId());
+
+                    for (int i = 0; i < choices.size(); i++) {
+
+                        Button button = new Button(this.getContext());
+
+                        button.setText(choices.get(i).getChoiceText());
+                        button.setOnClickListener((getOnClickListener(button)));
+
+                        buttonContainer.addView(button);
+
+                    }
+
+                    break;
+
+                case "ORDER":
+                    break;
+
+                case "CHOICE":
+                    break;
+
+                case "TEXT":
+                    break;
+            }
+        }
+
+    }
+
+    View.OnClickListener getOnClickListener(final Button button)  {
+        return new View.OnClickListener() {
+            public void onClick(View v) {
+
+                betalentDb.getCampaignDao().setNextQuestion(mCampaignId, 1);
+
+                getQuestion();
+            }
+        };
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -117,13 +190,4 @@ public class QuestionFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void getQuestion() {
-
-        Question question = betalentDb.getQuestionDao().getNextQuestion(mCampaignId);
-
-        if (question != null) {
-            txtQuestion.setText(Html.fromHtml(question.getQuestionTextSelf()).toString());
-        }
-
-    }
 }

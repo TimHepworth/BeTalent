@@ -18,7 +18,7 @@ public interface QuestionDAO {
     @Query("SELECT * FROM questions WHERE (campaignId = :campaignId) AND (questionNo = :questionNo)")
     public Question getQuestion(int campaignId, int questionNo);
 
-    @Query("SELECT * FROM questions Q INNER JOIN campaigns C WHERE (Q.campaignId = :campaignId) AND (Q.questionNo = C.currentQuestionNo)")
+    @Query("SELECT * FROM questions Q INNER JOIN campaigns C ON C.campaignId = Q.campaignId WHERE (Q.campaignId = :campaignId) AND (Q.questionNo = C.currentQuestionNo)")
     public Question getNextQuestion(int campaignId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

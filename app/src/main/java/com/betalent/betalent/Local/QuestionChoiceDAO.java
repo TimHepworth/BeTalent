@@ -12,11 +12,11 @@ import java.util.List;
 @Dao
 public interface QuestionChoiceDAO {
 
-    @Query("SELECT * FROM questionChoices")
-    public List<QuestionChoice> getQuestionChoices();
+    @Query("SELECT * FROM questionChoices WHERE questionId = :questionId")
+    public List<QuestionChoice> getQuestionChoices(int questionId);
 
     @Query("SELECT * FROM questionChoices WHERE questionChoiceId = :questionChoiceId")
-    public QuestionChoice getQuestion(int questionChoiceId);
+    public QuestionChoice getQuestionChoice(int questionChoiceId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long insertQuestionChoice(QuestionChoice questionChoice);

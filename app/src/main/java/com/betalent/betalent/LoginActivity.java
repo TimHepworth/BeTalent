@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -321,8 +322,10 @@ public class LoginActivity extends AppCompatActivity {
 
                                         JSONObject jsonChoice = jsonQuestionChoices.getJSONObject(k);
 
+                                        System.out.println("adding choice: questionId: " + jsonQuestion.getInt("QuestionId") + " questionChoiceId: " + jsonChoice.getInt("QuestionChoiceId"));
+
                                         QuestionChoice choice = new QuestionChoice(jsonChoice.getInt("QuestionChoiceId"),
-                                                jsonChoice.getInt("QuestionId"),
+                                                jsonQuestion.getInt("QuestionId"),
                                                 jsonChoice.getString("ChoiceText"),
                                                 jsonChoice.getInt("Score"),
                                                 jsonChoice.getInt("PersonalAttributeId"),
@@ -345,13 +348,13 @@ public class LoginActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             Toast.makeText(LoginActivity.this, getString(R.string.err_json_parse), Toast.LENGTH_LONG).show();
                         }
+
                     }
 
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
                         Toast.makeText(LoginActivity.this, getString(R.string.err_unexpected) + ' ' + error.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });

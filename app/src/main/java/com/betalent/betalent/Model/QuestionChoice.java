@@ -3,10 +3,9 @@ package com.betalent.betalent.Model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "questionChoices")
+@Entity(primaryKeys = {"questionChoiceId", "questionId"}, tableName = "questionChoices")
 public class QuestionChoice {
 
-    @PrimaryKey
     private int questionChoiceId;
     private int questionId;
     private String choiceText;
@@ -15,7 +14,6 @@ public class QuestionChoice {
     private int displayOrder;
 
     public QuestionChoice() {
-
     }
 
     public QuestionChoice(int questionChoiceId, int questionId, String choiceText,
