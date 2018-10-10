@@ -15,6 +15,9 @@ public interface QuestionDAO {
     @Query("SELECT * FROM questions")
     public List<Question> getQuestions();
 
+    @Query("SELECT COUNT(*) FROM questions WHERE (campaignId = :campaignId)")
+    public int getNumQuestions(int campaignId);
+
     @Query("SELECT * FROM questions WHERE (campaignId = :campaignId) AND (questionNo = :questionNo)")
     public Question getQuestion(int campaignId, int questionNo);
 

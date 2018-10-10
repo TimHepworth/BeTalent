@@ -11,13 +11,44 @@
         android:orientation="vertical"
         android:padding="8dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:background="@color/colorBeTalentBlue"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnPrevQuestion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#64a3f0"
+                android:textColor="#000000"
+                android:text="@string/prev_question">
+            </Button>
+
+            <TextView
+                android:id="@+id/txtQuestionProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/txtQuestion"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="20"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textSize="18sp"
+            android:textColor="@color/colorWhite"
+            android:background="@color/colorBeTalentOrange"
             android:textStyle="bold"/>
 
         <LinearLayout

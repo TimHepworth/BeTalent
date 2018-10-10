@@ -34,6 +34,7 @@ import com.betalent.betalent.Model.BeTalentDB;
 import com.betalent.betalent.Model.Campaign;
 import com.betalent.betalent.Model.Question;
 import com.betalent.betalent.Model.QuestionChoice;
+import com.betalent.betalent.Model.Tag;
 import com.betalent.betalent.Model.User;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -226,6 +227,8 @@ public class LoginActivity extends AppCompatActivity {
                                                     @Override
                                                     public void run() {
 
+                                                        GetTags();
+
                                                         RefreshData();
 
                                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -293,7 +296,8 @@ public class LoginActivity extends AppCompatActivity {
                                         jsonObj.getString("AssessmentStatus"),
                                         jsonObj.getString("ProductIcon"));
 
-                                DownloadImage(jsonObj.getString("ProductIcon"), jsonObj.getInt("CampaignId"), LoginActivity.this);
+                                DownloadImage(BeTalentProperties.ICON_URL + jsonObj.getString("ProductIcon"),
+                                        "ICON_" + jsonObj.getInt("CampaignId") + ".jpg", LoginActivity.this);
 
                                 betalentDb.getCampaignDao().insertCampaign(campaign);
 
@@ -362,9 +366,64 @@ public class LoginActivity extends AppCompatActivity {
         BeTalentProperties.getInstance().mRequestQueue.add(jsObjRequest);
     }
 
-    private void DownloadImage(String productIcon, final int campaignId, Context ctx) {
+    private void GetTags() {
 
-        String url = BeTalentProperties.ICON_URL + productIcon;
+        System.out.println("Getting tags ...");
+
+        String url = BeTalentProperties.BASE_URL + "getTags";
+//        url += "?lUserId=" + BeTalentProperties.getInstance().userId;
+//        url += "&sEmployeeLevel=" + BeTalentProperties.getInstance().employeeLevel;
+
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try {
+
+                            betalentDb = BeTalentDB.getInstance(LoginActivity.this);
+
+                            for (int i = 0; i < response.length(); i++) {
+
+                                JSONObject jsonObj = response.getJSONObject(i);
+
+                                Tag tag = new Tag(jsonObj.getInt("TagId"),
+                                        jsonObj.getString("TagName"),
+                                        jsonObj.getString("CardImageFile"),
+                                        jsonObj.getString("CardText"));
+
+                                DownloadImage(BeTalentProperties.CARD_URL + jsonObj.getString("CardImageFile"),
+                                        "CARD_" + jsonObj.getInt("TagId") + ".jpg", LoginActivity.this);
+
+                                betalentDb.getTagDao().insertTag(tag);
+
+                            }
+
+                            //
+                            //  Hide spinning circle
+                            //
+
+                            pBar.setVisibility(View.INVISIBLE);
+
+                        } catch (JSONException e) {
+                            Toast.makeText(LoginActivity.this, getString(R.string.err_json_parse), Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(LoginActivity.this, getString(R.string.err_unexpected) + ' ' + error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        BeTalentProperties.getInstance().mRequestQueue.add(jsObjRequest);
+    }
+
+    private void DownloadImage(String url, final String fileName, Context ctx) {
 
         Glide.with(ctx)
                 .asBitmap()
@@ -372,7 +431,7 @@ public class LoginActivity extends AppCompatActivity {
                 .into(new SimpleTarget<Bitmap>(200,200) {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        saveImage(resource, campaignId, LoginActivity.this);
+                        saveImage(resource, fileName, LoginActivity.this);
                     }
 //                    @Override
 //                    public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation)  {
@@ -381,10 +440,9 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private String saveImage(Bitmap image, int campaignId, Context ctx) {
+    private String saveImage(Bitmap image, String imageFileName, Context ctx) {
         String savedImagePath = null;
 
-        String imageFileName = "ICON_" + campaignId + ".jpg";
         File imageFile = new File(ctx.getFilesDir(), imageFileName);
         savedImagePath = imageFile.getAbsolutePath();
 

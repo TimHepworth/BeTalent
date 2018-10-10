@@ -37,8 +37,11 @@ public class QuestionFragment extends Fragment {
     private int mCampaignId;
     private String mCampaignName;
     private int mQuestionNo;
+    private int mNumQuestions;
 
+    Button btnPrevQuestion;
     TextView txtQuestion;
+    TextView txtQuestionProgress;
     LinearLayout buttonContainer;
 
     private BeTalentDB betalentDb;
@@ -75,12 +78,16 @@ public class QuestionFragment extends Fragment {
 
         betalentDb = BeTalentDB.getInstance(this.getContext());
 
+        mNumQuestions = betalentDb.getQuestionDao().getNumQuestions(mCampaignId);
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question, container, false);
 
         ((MainActivity) getActivity())
                 .setActionBarTitle(mCampaignName);
 
+        btnPrevQuestion = view.findViewById(R.id.btnPrevQuestion);
+        txtQuestionProgress = view.findViewById(R.id.txtQuestionProgress);
         txtQuestion = view.findViewById(R.id.txtQuestion);
         buttonContainer = view.findViewById(R.id.buttonContainer);
 
@@ -96,6 +103,10 @@ public class QuestionFragment extends Fragment {
         if (question != null) {
 
             mQuestionNo = question.getQuestionNo();
+
+            btnPrevQuestion.setOnClickListener((getOnClickListener(btnPrevQuestion, -1)));
+
+            txtQuestionProgress.setText(mQuestionNo + " / " + mNumQuestions);
 
             //
             //  Show the question text
@@ -119,7 +130,7 @@ public class QuestionFragment extends Fragment {
                         Button button = new Button(this.getContext());
 
                         button.setText(choices.get(i).getChoiceText());
-                        button.setOnClickListener((getOnClickListener(button)));
+                        button.setOnClickListener((getOnClickListener(button, 1)));
 
                         buttonContainer.addView(button);
 
@@ -140,11 +151,13 @@ public class QuestionFragment extends Fragment {
 
     }
 
-    View.OnClickListener getOnClickListener(final Button button)  {
+    View.OnClickListener getOnClickListener(final Button button, final int questionDelta)  {
         return new View.OnClickListener() {
             public void onClick(View v) {
 
-                betalentDb.getCampaignDao().setNextQuestion(mCampaignId, 1);
+                if (((questionDelta < 0) && (mQuestionNo > 1)) || ((questionDelta > 0) && (mQuestionNo < mNumQuestions)) ){
+                    betalentDb.getCampaignDao().setNextQuestion(mCampaignId, questionDelta);
+                }
 
                 getQuestion();
             }
