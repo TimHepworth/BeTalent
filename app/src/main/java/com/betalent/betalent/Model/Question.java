@@ -14,6 +14,7 @@ public class Question {
     private int displayOrder;
     private int numScaleChoices;
     private int questionNo;
+    private int scaleId;
     private String questionType;
     private String questionTextSelf;
     private String questionTextOthers;
@@ -30,6 +31,7 @@ public class Question {
                     int displayOrder,
                     int numScaleChoices,
                     int questionNo,
+                    int scaleId,
                     String questionType,
                     String questionTextSelf,
                     String questionTextOthers) {
@@ -40,6 +42,7 @@ public class Question {
         this.displayOrder = displayOrder;
         this.numScaleChoices = numScaleChoices;
         this.questionNo = questionNo;
+        this.scaleId = scaleId;
         this.questionType = questionType;
         this.questionTextSelf = questionTextSelf;
         this.questionTextOthers = questionTextOthers;
@@ -99,6 +102,14 @@ public class Question {
 
     public void setQuestionNo(int questionNo) {
         this.questionNo = questionNo;
+    }
+
+    public int getScaleId() {
+        return scaleId;
+    }
+
+    public void setScaleId(int scaleId) {
+        this.scaleId = scaleId;
     }
 
     public String getQuestionType() {

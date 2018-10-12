@@ -8,6 +8,7 @@ public class QuestionChoice {
 
     private int questionChoiceId;
     private int questionId;
+    private int scaleId;
     private String choiceText;
     private int score;
     private int personalAttributeId;
@@ -16,10 +17,11 @@ public class QuestionChoice {
     public QuestionChoice() {
     }
 
-    public QuestionChoice(int questionChoiceId, int questionId, String choiceText,
+    public QuestionChoice(int questionChoiceId, int questionId, int scaleId, String choiceText,
                           int score, int personalAttributeId, int displayOrder) {
         this.questionChoiceId = questionChoiceId;
         this.questionId = questionId;
+        this.scaleId = scaleId;
         this.choiceText = choiceText;
         this.score = score;
         this.personalAttributeId = personalAttributeId;
@@ -40,6 +42,14 @@ public class QuestionChoice {
 
     public void setQuestionId(int questionId) {
         this.questionId = questionId;
+    }
+
+    public int getScaleId() {
+        return scaleId;
+    }
+
+    public void setScaleId(int scaleId) {
+        this.scaleId = scaleId;
     }
 
     public String getChoiceText() {

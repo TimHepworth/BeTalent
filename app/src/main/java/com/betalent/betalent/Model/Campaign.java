@@ -19,6 +19,9 @@ public class Campaign {
     private String assesseeSurname;
     private String assessmentStatus;
     private String productIcon;
+    private String productType;
+    private int numCardsRequired;
+    private String tagType;
 
     public Campaign() {
     }
@@ -32,7 +35,10 @@ public class Campaign {
                     String assesseeForename,
                     String assesseeSurname,
                     String assessmentStatus,
-                    String productIcon) {
+                    String productIcon,
+                    String productType,
+                    int numCardsRequired,
+                    String tagType) {
         this.campaignUserId = campaignUserId;
         this.campaignId = campaignId;
         this.companyId = companyId;
@@ -43,6 +49,9 @@ public class Campaign {
         this.assesseeSurname = assesseeSurname;
         this.assessmentStatus = assessmentStatus;
         this.productIcon = productIcon;
+        this.productType = productType;
+        this.numCardsRequired = numCardsRequired;
+        this.tagType = tagType;
     }
 
     public int getCampaignUserId() {
@@ -117,11 +126,35 @@ public class Campaign {
         this.productIcon = productIcon;
     }
 
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
     public int getCurrentQuestionNo() {
         return currentQuestionNo;
     }
 
     public void setCurrentQuestionNo(int currentQuestionNo) {
         this.currentQuestionNo = currentQuestionNo;
+    }
+
+    public int getNumCardsRequired() {
+        return numCardsRequired;
+    }
+
+    public void setNumCardsRequired(int numCardsRequired) {
+        this.numCardsRequired = numCardsRequired;
+    }
+
+    public String getTagType() {
+        return tagType;
+    }
+
+    public void setTagType(String tagType) {
+        this.tagType = tagType;
     }
 }

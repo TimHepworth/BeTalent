@@ -123,7 +123,7 @@ public class QuestionFragment extends Fragment {
             switch(question.getQuestionType()) {
 
                 case "SCALE":
-                    List<QuestionChoice> choices = betalentDb.getQuestionChoiceDao().getQuestionChoices(question.getQuestionId());
+                    List<QuestionChoice> choices = betalentDb.getQuestionChoiceDao().getScaleQuestionChoices(question.getScaleId());
 
                     for (int i = 0; i < choices.size(); i++) {
 

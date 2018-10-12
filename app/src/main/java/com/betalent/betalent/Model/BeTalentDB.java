@@ -6,21 +6,25 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
 import com.betalent.betalent.Local.CampaignDAO;
+import com.betalent.betalent.Local.ProductSectionDAO;
 import com.betalent.betalent.Local.QuestionChoiceDAO;
 import com.betalent.betalent.Local.QuestionDAO;
+import com.betalent.betalent.Local.TagDAO;
 import com.betalent.betalent.Local.UserDAO;
 
 //
 //  Singleton pattern class for database reference
 //
 
-@Database(entities = { User.class, Campaign.class, Question.class, QuestionChoice.class }, version = 1)
+@Database(entities = { User.class, Campaign.class, Question.class, QuestionChoice.class, Tag.class, ProductSection.class }, version = 1)
 public abstract class BeTalentDB extends RoomDatabase {
 
     public abstract UserDAO getUserDao();
     public abstract CampaignDAO getCampaignDao();
     public abstract QuestionDAO getQuestionDao();
     public abstract QuestionChoiceDAO getQuestionChoiceDao();
+    public abstract TagDAO getTagDao();
+    public abstract ProductSectionDAO getProductSectionDao();
 
     private static BeTalentDB betalentDB;
 

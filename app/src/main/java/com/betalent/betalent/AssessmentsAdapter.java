@@ -85,8 +85,22 @@ class AssessmentsAdapter extends RecyclerView.Adapter<AssessmentsAdapter.ViewHol
             {
                 int campaignId = assessments.get(position).getCampaignId();
                 String campaignName = assessments.get(position).getCampaignName();
+                Fragment fragment = null;
 
-                Fragment fragment = QuestionFragment.newInstance(campaignId, campaignName);
+                switch (assessments.get(position).getProductType()) {
+                    case "QUESTIONNAIRE":
+                        fragment = QuestionFragment.newInstance(campaignId, campaignName);
+                        break;
+                    case "CARD_SORT":
+                        fragment = CardSortFragment.newInstance(campaignId, campaignName);
+                        break;
+                    case "PA_CARD_SORT":
+                        fragment = CardSortFragment.newInstance(campaignId, campaignName);
+                        break;
+                    default:
+                        fragment = QuestionFragment.newInstance(campaignId, campaignName);
+                        break;
+                }
                 FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
 
                 fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("").commit();

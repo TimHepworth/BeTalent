@@ -15,6 +15,9 @@ public interface QuestionChoiceDAO {
     @Query("SELECT * FROM questionChoices WHERE questionId = :questionId")
     public List<QuestionChoice> getQuestionChoices(int questionId);
 
+    @Query("SELECT * FROM questionChoices WHERE scaleId = :scaleId ORDER BY displayOrder")
+    public List<QuestionChoice> getScaleQuestionChoices(int scaleId);
+
     @Query("SELECT * FROM questionChoices WHERE questionChoiceId = :questionChoiceId")
     public QuestionChoice getQuestionChoice(int questionChoiceId);
 

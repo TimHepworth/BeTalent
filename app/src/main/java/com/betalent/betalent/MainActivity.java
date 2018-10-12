@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AssessmentsFragment.OnFragmentInteractionListener,
         SettingsFragment.OnFragmentInteractionListener,
-        QuestionFragment.OnFragmentInteractionListener {
+        QuestionFragment.OnFragmentInteractionListener,
+        CardSortFragment.OnFragmentInteractionListener {
 
 //    public BeTalentDB betalentDb;
 

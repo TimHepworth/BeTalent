@@ -1,6 +1,7 @@
 package com.betalent.betalent.Model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "tags")
@@ -11,16 +12,19 @@ public class Tag {
     private String tagName;
     private String tagImage;
     private String cardText;
+    private String tagType;
 
     public Tag() {
 
     }
 
-    public Tag(int tagId, String tagName, String tagImage, String cardText) {
+    @Ignore
+    public Tag(int tagId, String tagName, String tagImage, String cardText, String tagType) {
         this.tagId = tagId;
         this.tagName = tagName;
         this.tagImage = tagImage;
         this.cardText = cardText;
+        this.tagType = tagType;
     }
 
     public int getTagId() {
@@ -55,4 +59,11 @@ public class Tag {
         this.cardText = cardText;
     }
 
+    public String getTagType() {
+        return tagType;
+    }
+
+    public void setTagType(String tagType) {
+        this.tagType = tagType;
+    }
 }

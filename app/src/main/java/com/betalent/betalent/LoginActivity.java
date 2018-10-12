@@ -32,12 +32,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.betalent.betalent.Local.CampaignDAO;
 import com.betalent.betalent.Model.BeTalentDB;
 import com.betalent.betalent.Model.Campaign;
+import com.betalent.betalent.Model.ProductSection;
 import com.betalent.betalent.Model.Question;
 import com.betalent.betalent.Model.QuestionChoice;
 import com.betalent.betalent.Model.Tag;
 import com.betalent.betalent.Model.User;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 
 import org.json.JSONArray;
@@ -227,9 +229,13 @@ public class LoginActivity extends AppCompatActivity {
                                                     @Override
                                                     public void run() {
 
+                                                        GetQuestions();
+
                                                         GetTags();
 
-                                                        RefreshData();
+                                                        GetProductSections();
+
+                                                        GetScaleChoices();
 
                                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                                         startActivity(intent);
@@ -261,7 +267,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void RefreshData() {
+    private void GetQuestions() {
 
         System.out.println("Refreshing data ...");
 
@@ -294,7 +300,10 @@ public class LoginActivity extends AppCompatActivity {
                                         jsonObj.getString("AssesseeForename"),
                                         jsonObj.getString("AssesseeSurname"),
                                         jsonObj.getString("AssessmentStatus"),
-                                        jsonObj.getString("ProductIcon"));
+                                        jsonObj.getString("ProductIcon"),
+                                        jsonObj.getString("ProductType"),
+                                        jsonObj.getInt("NumCardsRequired"),
+                                        jsonObj.getString("TagType"));
 
                                 DownloadImage(BeTalentProperties.ICON_URL + jsonObj.getString("ProductIcon"),
                                         "ICON_" + jsonObj.getInt("CampaignId") + ".jpg", LoginActivity.this);
@@ -314,6 +323,7 @@ public class LoginActivity extends AppCompatActivity {
                                             jsonQuestion.getInt("DisplayOrder"),
                                             jsonQuestion.getInt("NumScaleChoices"),
                                             j + 1,
+                                            jsonQuestion.getInt("ScaleId"),
                                             jsonQuestion.getString("QuestionType"),
                                             jsonQuestion.getString("QuestionTextSelf"),
                                             jsonQuestion.getString("QuestionTextOthers"));
@@ -330,6 +340,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                         QuestionChoice choice = new QuestionChoice(jsonChoice.getInt("QuestionChoiceId"),
                                                 jsonQuestion.getInt("QuestionId"),
+                                                jsonQuestion.getInt("ScaleId"),
                                                 jsonChoice.getString("ChoiceText"),
                                                 jsonChoice.getInt("Score"),
                                                 jsonChoice.getInt("PersonalAttributeId"),
@@ -340,6 +351,118 @@ public class LoginActivity extends AppCompatActivity {
                                     }
 
                                 }
+
+                            }
+
+                            //
+                            //  Hide spinning circle
+                            //
+
+                            pBar.setVisibility(View.INVISIBLE);
+
+                        } catch (JSONException e) {
+                            Toast.makeText(LoginActivity.this, getString(R.string.err_json_parse), Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(LoginActivity.this, getString(R.string.err_unexpected) + ' ' + error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        BeTalentProperties.getInstance().mRequestQueue.add(jsObjRequest);
+    }
+
+    private void GetScaleChoices() {
+
+        System.out.println("Getting scale choices ...");
+
+        String url = BeTalentProperties.BASE_URL + "getScaleChoices";
+//        url += "?lUserId=" + BeTalentProperties.getInstance().userId;
+//        url += "&sEmployeeLevel=" + BeTalentProperties.getInstance().employeeLevel;
+
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try {
+
+                            betalentDb = BeTalentDB.getInstance(LoginActivity.this);
+
+                            for (int i = 0; i < response.length(); i++) {
+
+                                JSONObject jsonObj = response.getJSONObject(i);
+
+                                QuestionChoice choice = new QuestionChoice(jsonObj.getInt("QuestionChoiceId"),
+                                        jsonObj.getInt("QuestionId"),
+                                        jsonObj.getInt("ScaleId"),
+                                        jsonObj.getString("ChoiceText"),
+                                        jsonObj.getInt("Score"),
+                                        jsonObj.getInt("PersonalAttributeId"),
+                                        jsonObj.getInt("DisplayOrder"));
+
+                                betalentDb.getQuestionChoiceDao().insertQuestionChoice(choice);
+
+                            }
+
+                            //
+                            //  Hide spinning circle
+                            //
+
+                            pBar.setVisibility(View.INVISIBLE);
+
+                        } catch (JSONException e) {
+                            Toast.makeText(LoginActivity.this, getString(R.string.err_json_parse), Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(LoginActivity.this, getString(R.string.err_unexpected) + ' ' + error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        BeTalentProperties.getInstance().mRequestQueue.add(jsObjRequest);
+    }
+
+    private void GetProductSections() {
+
+        System.out.println("Getting product sections ...");
+
+        String url = BeTalentProperties.BASE_URL + "getProductSections";
+        url += "?lUserId=" + BeTalentProperties.getInstance().userId;
+        url += "&sEmployeeLevel=" + BeTalentProperties.getInstance().employeeLevel;
+
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try {
+
+                            betalentDb = BeTalentDB.getInstance(LoginActivity.this);
+
+                            for (int i = 0; i < response.length(); i++) {
+
+                                JSONObject jsonObj = response.getJSONObject(i);
+
+                                ProductSection productSection = new ProductSection(jsonObj.getInt("ProductSectionId"),
+                                        jsonObj.getString("SectionName"),
+                                        jsonObj.getInt("DisplayOrder"),
+                                        jsonObj.getInt("ScaleId"),
+                                        jsonObj.getString("SectionInstructions"));
+
+                                betalentDb.getProductSectionDao().insertProductSection(productSection);
 
                             }
 
@@ -391,7 +514,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Tag tag = new Tag(jsonObj.getInt("TagId"),
                                         jsonObj.getString("TagName"),
                                         jsonObj.getString("CardImageFile"),
-                                        jsonObj.getString("CardText"));
+                                        jsonObj.getString("CardText"),
+                                        jsonObj.getString("BESTType"));
 
                                 DownloadImage(BeTalentProperties.CARD_URL + jsonObj.getString("CardImageFile"),
                                         "CARD_" + jsonObj.getInt("TagId") + ".jpg", LoginActivity.this);
@@ -428,15 +552,11 @@ public class LoginActivity extends AppCompatActivity {
         Glide.with(ctx)
                 .asBitmap()
                 .load(url)
-                .into(new SimpleTarget<Bitmap>(200,200) {
+                .into(new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL) {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         saveImage(resource, fileName, LoginActivity.this);
                     }
-//                    @Override
-//                    public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation)  {
-//                        saveImage(resource);
-//                    }
                 });
     }
 
