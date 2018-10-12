@@ -1,5 +1,7 @@
 package com.betalent.betalent;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,10 +9,12 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -44,14 +48,16 @@ public class CardSortFragment extends Fragment {
     private List<Tag> mRejectedTags;
     private Iterator<Tag> mTagIterator;
     private boolean mflipped = false;
+    private AnimatorSet mSetRightOut;
+    private AnimatorSet mSetLeftIn;
 
     Button btnPrevQuestion;
     TextView txtQuestionProgress;
     ImageView imgCard;
     TextView txtTagName;
     TextView txtCardText;
-    LinearLayout cardFront;
-    LinearLayout cardBack;
+    FrameLayout cardFront;
+    FrameLayout cardBack;
 
     private BeTalentDB betalentDb;
 
@@ -101,6 +107,8 @@ public class CardSortFragment extends Fragment {
         txtTagName = view.findViewById(R.id.txtTagName);
         txtCardText = view.findViewById(R.id.txtCardText);
 
+        loadAnimations();
+
 //        imgCard.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -134,6 +142,11 @@ public class CardSortFragment extends Fragment {
         return view;
     }
 
+    private void loadAnimations() {
+        mSetRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.out_animation);
+        mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.in_animation);
+    }
+
     private void GetCard() {
 
         if (mTagIterator.hasNext()) {
@@ -146,7 +159,7 @@ public class CardSortFragment extends Fragment {
             imgCard.setImageBitmap(card);
 
             txtTagName.setText(tag.getTagName());
-            txtCardText.setText(tag.getCardText());
+            txtCardText.setText(Html.fromHtml(tag.getCardText()));
 
         } else {
                 Toast.makeText(getContext(),
@@ -158,23 +171,20 @@ public class CardSortFragment extends Fragment {
 
     private void flipCard() {
 
-        ObjectAnimator flip;
-
-        if (mflipped) {
-            flip = ObjectAnimator.ofFloat(cardFront, "rotationY", 180f, 0f);
+        if (!mflipped) {
+            mSetRightOut.setTarget(cardFront);
+            mSetLeftIn.setTarget(cardBack);
+            mSetRightOut.start();
+            mSetLeftIn.start();
+            mflipped = true;
         } else {
-            flip = ObjectAnimator.ofFloat(cardFront, "rotationY", 0f, 180f);
-            flip.setDuration(500);
-            flip.start();
-            cardFront.setVisibility(View.INVISIBLE);
-            cardBack.setVisibility(View.VISIBLE);
-            flip = ObjectAnimator.ofFloat(cardBack, "rotationY", 90f, 0f);
-            flip.setDuration(500);
-            flip.start();
+            mSetRightOut.setTarget(cardBack);
+            mSetLeftIn.setTarget(cardFront);
+            mSetRightOut.start();
+            mSetLeftIn.start();
+            mflipped = false;
         }
 
-
-        mflipped = !mflipped;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
