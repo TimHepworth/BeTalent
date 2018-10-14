@@ -1,8 +1,11 @@
 package com.betalent.betalent;
 
+import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +20,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +28,10 @@ import com.betalent.betalent.Model.BeTalentDB;
 import com.betalent.betalent.Model.Campaign;
 import com.betalent.betalent.Model.Tag;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 
 /**
@@ -41,23 +47,29 @@ public class CardSortFragment extends Fragment {
     private int mCampaignId;
     private String mCampaignName;
     private int mNumCardsSelected = 0;
+    private int mNumCardsRejected = 0;
     private List<Tag> mTags;
     private Campaign mCampaign;
     private int mTagIndex = 0;
-    private List<Tag> mSelectedTags;
-    private List<Tag> mRejectedTags;
+    private List<Tag> mSelectedTags = new ArrayList<Tag>();
+    private List<Tag> mRejectedTags = new ArrayList<Tag>();
     private Iterator<Tag> mTagIterator;
     private boolean mflipped = false;
     private AnimatorSet mSetRightOut;
     private AnimatorSet mSetLeftIn;
+    private ListIterator<Tag> mTagListIterator;
+    private Tag mCurrentTag;
 
     Button btnPrevQuestion;
-    TextView txtQuestionProgress;
+    TextView txtNumSelected;
+    TextView txtNumRejected;
     ImageView imgCard;
     TextView txtTagName;
+    TextView txtTagNameFront;
     TextView txtCardText;
     FrameLayout cardFront;
     FrameLayout cardBack;
+    RelativeLayout cardHolder;
 
     private BeTalentDB betalentDb;
 
@@ -87,6 +99,7 @@ public class CardSortFragment extends Fragment {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -100,11 +113,14 @@ public class CardSortFragment extends Fragment {
                 .setActionBarTitle(mCampaignName);
 
         btnPrevQuestion = view.findViewById(R.id.btnPrevQuestion);
-        txtQuestionProgress = view.findViewById(R.id.txtQuestionProgress);
+        txtNumSelected = view.findViewById(R.id.txtNumSelected);
+        txtNumRejected = view.findViewById(R.id.txtNumRejected);
         imgCard = view.findViewById(R.id.imgCard);
+        cardHolder = view.findViewById(R.id.cardHolder);
         cardFront = view.findViewById(R.id.cardFront);
         cardBack = view.findViewById(R.id.cardBack);
         txtTagName = view.findViewById(R.id.txtTagName);
+        txtTagNameFront = view.findViewById(R.id.txtTagNameFront);
         txtCardText = view.findViewById(R.id.txtCardText);
 
         loadAnimations();
@@ -119,25 +135,122 @@ public class CardSortFragment extends Fragment {
             public void onTouch() {
                 flipCard();
             }
-            public void onSwipeRight() {
-                GetCard();
-            }
             public void onSwipeLeft() {
-                GetCard();
+
+                //
+                //  Animate the view left
+                //
+
+                cardHolder.animate()
+                        .translationX(0 - cardHolder.getWidth())
+                        .setDuration(300)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+
+                                cardHolder.animate()
+                                        .translationX(0)
+                                        .setDuration(0)
+                                        .setListener(null);
+                                GetCard("Next");
+                                //cardHolder.setVisibility(View.GONE);
+                            }
+                        });
             }
-//            public void onSwipeBottom() {
-//                Toast.makeText(getContext(), "bottom", Toast.LENGTH_SHORT).show();
-//            }
+            public void onSwipeRight() {
+
+                //
+                //  Animate the view left
+                //
+
+                cardHolder.animate()
+                        .translationX(cardHolder.getWidth())
+                        .setDuration(300)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+
+                                cardHolder.animate()
+                                        .translationX(0)
+                                        .setDuration(0)
+                                        .setListener(null);
+                                GetCard("Previous");
+                                //cardHolder.setVisibility(View.GONE);
+                            }
+                        });
+            }
+            public void onSwipeTop() {
+//                Toast.makeText(getContext(), "selected", Toast.LENGTH_SHORT).show();
+                mSelectedTags.add(mCurrentTag);
+                mTagListIterator.remove();
+                mNumCardsSelected++;
+                txtNumSelected.setText(getString(R.string.num_cards_selected) + " " + mNumCardsSelected);
+
+                //
+                //  Animate the view up
+                //
+
+                cardHolder.animate()
+                        .translationY(0 - cardHolder.getHeight())
+                        .setDuration(300)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+
+                                cardHolder.animate()
+                                        .translationY(0)
+                                        .setDuration(0)
+                                        .setListener(null);
+                                GetCard("Next");
+                                //cardHolder.setVisibility(View.GONE);
+                            }
+                        });
+
+
+            }
+            public void onSwipeBottom() {
+//                Toast.makeText(getContext(), "rejected", Toast.LENGTH_SHORT).show();
+                mRejectedTags.add(mCurrentTag);
+                mTagListIterator.remove();
+                mNumCardsRejected++;
+                txtNumRejected.setText(getString(R.string.num_cards_rejected) + " " + mNumCardsRejected);
+
+                //
+                //  Animate the view up
+                //
+
+                cardHolder.animate()
+                        .translationY(cardHolder.getHeight())
+                        .setDuration(300)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+
+                                cardHolder.animate()
+                                        .translationY(0)
+                                        .setDuration(0)
+                                        .setListener(null);
+                                GetCard("Next");
+                                //cardHolder.setVisibility(View.GONE);
+                            }
+                        });
+            }
 
         });
 
         mCampaign = betalentDb.getCampaignDao().getCampaign(mCampaignId);
         mTags = betalentDb.getTagDao().getTags(mCampaign.getTagType());
         mTagIterator = mTags.iterator();
+        mTagListIterator = mTags.listIterator();
 
-        txtQuestionProgress.setText(getString(R.string.num_cards_selected) + " " + mNumCardsSelected);
+        txtNumSelected.setText(getString(R.string.num_cards_selected) + " " + mNumCardsSelected);
+        txtNumRejected.setText(getString(R.string.num_cards_rejected) + " " + mNumCardsRejected);
 
-        GetCard();
+        GetCard("Next");
 
         return view;
     }
@@ -147,19 +260,31 @@ public class CardSortFragment extends Fragment {
         mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.in_animation);
     }
 
-    private void GetCard() {
+    private void GetCard(String direction) {
 
-        if (mTagIterator.hasNext()) {
+        mCurrentTag = null;
 
-            Tag tag = mTagIterator.next();
+        if (direction == "Next") {
 
-            String filename = getContext().getFilesDir() + "/CARD_" + tag.getTagId() + ".jpg";
+            if (mTagListIterator.hasNext()) {
+                mCurrentTag = mTagListIterator.next();
+            }
+        } else {
+            if (mTagListIterator.hasPrevious()) {
+                mCurrentTag = mTagListIterator.previous();
+            }
+        }
+
+        if (mCurrentTag != null) {
+
+            String filename = getContext().getFilesDir() + "/CARD_" + mCurrentTag.getTagId() + ".jpg";
 
             Bitmap card = BitmapFactory.decodeFile(filename);
             imgCard.setImageBitmap(card);
 
-            txtTagName.setText(tag.getTagName());
-            txtCardText.setText(Html.fromHtml(tag.getCardText()));
+            txtTagNameFront.setText(mCurrentTag.getTagName());
+            txtTagName.setText(mCurrentTag.getTagName());
+            txtCardText.setText(Html.fromHtml(mCurrentTag.getCardText()));
 
         } else {
                 Toast.makeText(getContext(),

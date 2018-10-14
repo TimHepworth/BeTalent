@@ -23,6 +23,7 @@
     <string name="complete_by">Complete by: {0}</string>
     <string name="prev_question">Prev.</string>
     <string name="num_cards_selected">No. Selected:</string>
+    <string name="num_cards_rejected">No. Rejected:</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
